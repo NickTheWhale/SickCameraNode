@@ -27,12 +27,13 @@ function handleData(data) {
             //console.log(`height: ${height}, width: ${width}, number: ${number}, time: ${time}, size: ${size}`);
             g_count = number;
             g_imageData = Buffer.allocUnsafe(Number(size));
-            data.copy(g_imageData, 0, offset);
+            //data.copy(g_imageData, 0, offset);
         }
-        if (g_imageData) {
-            const remainingSize = g_imageData.length - g_imageData.byteOffset - g_imageData.length;
+        if (g_imageData !== null) {
+            const remainingSize = g_imageData.length - g_imageData.byteOffset;
             const dataSize = Math.min(data.length, remainingSize);
-            data.copy(g_imageData, g_imageData.byteOffset + g_imageData.length - remainingSize, 0, dataSize);
+            data.copy(g_imageData, g_imageData.byteOffset, 0, dataSize);
+            //data.copy(g_imageData, g_imageData.byteOffset + g_imageData.length - remainingSize, 0, dataSize);
 
             if (dataSize < remainingSize) {
                 g_imageData = g_imageData.slice(0, g_imageData.byteOffset + g_imageData.length - remainingSize + dataSize);
@@ -43,7 +44,7 @@ function handleData(data) {
         }
     }
     catch (error) {
-        console.error(error?.message ?? "handleData() failed");
+        console.error(error ?? "handleData() failed");
     }
 }
 
@@ -64,6 +65,7 @@ function isPacketStart(data, offset) {
 
 const tcpServer = net.createServer((socket) => {
     socket.on('data', handleData);
+    socket.on('end', () => { console.log("socket end"); });
     socket.on('error', (err) => { console.error('tcp socket error', err); });
 });
 
