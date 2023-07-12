@@ -84,7 +84,7 @@
 
         var sseSource;
         const openStream = function () {
-            sseSource = new EventSource(`http://<%= serverAddress %>:<%= httpPort %>/stream`);
+            sseSource = new EventSource(`http://<%= httpAddress %>:<%= httpPort %>/stream`);
             sseSource.onmessage = function (event) {
                 const { image } = JSON.parse(event.data);
                 const { count } = JSON.parse(event.data);

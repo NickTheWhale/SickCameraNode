@@ -4,8 +4,10 @@ const ejs = require('ejs');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const SERVER_ADDRESS = process.env.SERVER_ADDRESS || "127.0.0.1";
+const HTTP_ADDRESS = process.env.HTTP_ADDRESS || "127.0.0.1";
 const HTTP_PORT = process.env.HTTP_PORT || 8080;
+
+const TCP_ADDRESS = process.env.TCP_ADDRESS || "127.0.0.1";
 const TCP_PORT = process.env.TCP_PORT || 3000;
 
 var g_imageData = null;
@@ -69,8 +71,8 @@ tcpServer.on('error', (err) => {
     console.error('tcp server error:', err);
 });
 
-tcpServer.listen(TCP_PORT, 'localhost', () => {
-    console.log(`tcp server listening on port ${TCP_PORT}`);
+tcpServer.listen(TCP_PORT, TCP_ADDRESS, () => {
+    console.log(`tcp server listening at ${TCP_ADDRESS}:${TCP_PORT}`);
 });
 
 const httpServer = http.createServer((req, res) => {
@@ -88,7 +90,7 @@ const httpServer = http.createServer((req, res) => {
         }, 150);
     }
     else {
-        ejs.renderFile("index.ejs", { serverAddress: SERVER_ADDRESS, httpPort: HTTP_PORT }, {}, (err, template) => {
+        ejs.renderFile("index.ejs", { httpAddress: HTTP_ADDRESS, httpPort: HTTP_PORT }, {}, (err, template) => {
             if (err) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end(`Internal Server Error: ${err.message}`);
@@ -101,6 +103,6 @@ const httpServer = http.createServer((req, res) => {
     }
 });
 
-httpServer.listen(HTTP_PORT, SERVER_ADDRESS, () => {
-    console.log(`http server running at ${SERVER_ADDRESS}:${HTTP_PORT}`);
+httpServer.listen(HTTP_PORT, HTTP_ADDRESS, () => {
+    console.log(`http server running at ${HTTP_ADDRESS}:${HTTP_PORT}`);
 });
