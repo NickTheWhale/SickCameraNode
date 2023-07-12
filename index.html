@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SickGUI Web Viewer</title>
+    <style>
+        body {
+            background: #b7d8e2;
+        }
+
+        main {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        section {
+            width: 500px;
+            padding: 8px;
+            text-align: center;
+            background: #fefefe;
+            border-radius: 9px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        image {
+            width: 500px;
+            padding: 8px;
+            text-align: center;
+            background: #6d97a3;
+            border-radius: 9px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        button {
+            background: #60b3ca;
+            color: #ffffff;
+            padding: 8px 16px;
+            border: #44a6f7;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            transition-duration: 50ms;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            transition-duration: 10ms;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <section>
+            <h1>SickGUI</h1>
+            <img id="image" width="500" , height="414">
+            <button onclick="openStream()">Open Stream</button>
+            <button onclick="closeStream()">Close Stream</button>
+            <div>
+                <label id="frameCounter">Frame number</label>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        const imageElement = document.getElementById("image");
+        const frameCounter = document.getElementById("frameCounter");
+
+        var sseSource;
+        const openStream = function () {
+            sseSource = new EventSource(`http://<%= serverAddress %>:<%= httpPort %>/stream`);
+            sseSource.onmessage = function (event) {
+                const { image } = JSON.parse(event.data);
+                const { count } = JSON.parse(event.data);
+                imageElement.src = "data:image/png;base64," + image;
+                frameCounter.innerHTML = count;
+            }
+        }
+
+        const closeStream = function () {
+            sseSource.close();
+        }
+
+    </script>
+</body>
+
+</html>
