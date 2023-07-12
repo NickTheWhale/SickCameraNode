@@ -1,7 +1,5 @@
 const net = require('net');
 const http = require('http');
-const fs = require('fs')
-const path = require('path');
 const ejs = require('ejs');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -43,7 +41,7 @@ function handleData(data) {
         }
     }
     catch (error) {
-        console.error(error?.message ?? "handleData failed");
+        console.error(error?.message ?? "handleData() failed");
     }
 }
 
@@ -64,11 +62,11 @@ function isPacketStart(data, offset) {
 
 const tcpServer = net.createServer((socket) => {
     socket.on('data', handleData);
-    socket.on('error', (err) => { console.error('Socket error', err); });
+    socket.on('error', (err) => { console.error('tcp socket error', err); });
 });
 
 tcpServer.on('error', (err) => {
-    console.error('Server error:', err);
+    console.error('tcp server error:', err);
 });
 
 tcpServer.listen(TCP_PORT, 'localhost', () => {
@@ -103,6 +101,6 @@ const httpServer = http.createServer((req, res) => {
     }
 });
 
-httpServer.listen(HTTP_PORT, () => {
-    console.log(`http server running at ${HTTP_PORT}`);
+httpServer.listen(HTTP_PORT, SERVER_ADDRESS, () => {
+    console.log(`http server running at ${SERVER_ADDRESS}:${HTTP_PORT}`);
 });
