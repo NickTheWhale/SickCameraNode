@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
         g_latestImageData = Buffer.allocUnsafe(Number(size));
         message.copy(g_latestImageData, 0, offset, message.length);
         g_count = number;
-        console.log(g_latestImageData);
+        console.log(`recv'd ${message.length} bytes`);
     });
 });
 
